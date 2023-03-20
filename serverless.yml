@@ -1,0 +1,224 @@
+org: zaballanovak
+app: calculator
+# Calculator Service
+
+service: calculator
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-east-1
+  memorySize: 128
+  apiGateway:
+    minimumCompressionSize: 256 # Enable gzip compression for responses > 1 KB
+    shouldStartNameWithService: true
+
+  environment:
+    CALCULATOR_TABLE: "${self:service}-table-${sls:stage}"
+    AURORA_DB_NAME: "calculator"
+    AURORA_DB_SECRET_NAME: "${self:service}-calculator-secret-${sls:stage}"
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - rds-data:*
+        - secretsmanager:GetSecretValue
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "*"
+
+	
+package:
+  individually: false
+  include:
+    - '!./**'
+    - './src/**'
+    - .env
+  exclude:
+    - '**'
+
+plugins:
+  - serverless-python-requirements
+  - serverless-plugin-simulate
+  - serverless-dynamodb-local
+  - serverless-openapi-documentation
+
+custom:
+  auroraDbClusterName:  ${self:service}-${self:provider.environment.AURORA_DB_NAME}-${sls:stage}
+  auroraDbSecretName: ${self:provider.environment.AURORA_DB_SECRET_NAME}
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    seed:
+      domain:
+        sources:
+          - table: ${self:provider.environment.CALCULATOR_TABLE}
+            sources: [./src/data/seed_data/seed_data.json]
+
+  pythonRequirements:
+    dockerizePip: non-linux
+    slim: true
+    strip: false
+	
+  documentation:
+    version: '1'
+    title: 'Calculator API'
+    description: 'This is a sample API'
+    models: {}
+
+functions:
+  get_user_operations:
+    handler: src/api/v1/operations/get_user_operations/get_user_operations_handler.get_user_operations
+    events:
+      - http:
+          method: get
+          path: api/v1/operations
+          cors: true
+    environment:
+      AURORA_DB_SECRET_ARN: !Ref AuroraDBSecret
+      AURORA_DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}
+
+  DBMigration:
+    name: "${self:service}-${sls:stage}-DBMigration"
+    description: Executes DB Schema Migrations.
+    handler: src/data/seed_data/db_migration.handler
+    memorySize: 512
+    timeout: 100
+    dependsOn: [AuroraDBClusterSecretAttachment, DBMigrationLogGroup]
+    environment:
+      AURORA_DB_SECRET_ARN: !Ref AuroraDBSecret
+      AURORA_DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}
+
+  new_operation_handler:
+    handler: src/api/v1/operations/new_operation/new_operation_handler.new_operation
+    events:
+      - http:
+          method: post
+          path: api/v1/operations/perform_operation
+          cors: true
+    environment:
+      AURORA_DB_SECRET_ARN: !Ref AuroraDBSecret
+      AURORA_DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}
+
+  auth:
+    handler: src/api/v1/auth/auth_handler.login
+    events:
+      - http:
+          method: post
+          path: api/v1/auth
+          cors: true
+
+resources:
+  Resources:
+    AuroraDBSecret:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Name: ${self:custom.auroraDbSecretName}
+        Description: Aurora Serverless Secret
+        GenerateSecretString:
+          SecretStringTemplate: '{"username": "aurora"}'
+          GenerateStringKey: "password"
+          PasswordLength: 16
+          ExcludeCharacters: '"@\\/'
+      # DeletionPolicy: Retain
+      # UpdateReplacePolicy: Retain
+
+    AuroraDBCluster:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        Engine: aurora-postgresql
+        EngineMode: serverless
+        ScalingConfiguration:
+          AutoPause: true
+          MaxCapacity: 4
+          MinCapacity: 2
+          SecondsUntilAutoPause: 1200
+        MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraDBSecret, ':SecretString:username}}']]
+        MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraDBSecret, ':SecretString:password}}']]
+        DeletionProtection: false
+        EnableHttpEndpoint: true
+      # DeletionPolicy: Retain
+      # UpdateReplacePolicy: Retain
+
+    AuroraDBClusterSecretAttachment:
+      DependsOn: [AuroraDBSecret, AuroraDBCluster]
+      Type: AWS::SecretsManager::SecretTargetAttachment
+      Properties:
+        SecretId: !Ref AuroraDBSecret
+        TargetId: !Ref AuroraDBCluster
+        TargetType: AWS::RDS::DBCluster
+
+    CalculatorTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.CALCULATOR_TABLE}
+        AttributeDefinitions:
+          - AttributeName: 'id'
+            AttributeType: 'S'
+          - AttributeName: 'username'
+            AttributeType: 'S'
+          - AttributeName: 'type'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'id'
+            KeyType: 'HASH'
+        GlobalSecondaryIndexes:
+          - IndexName: 'UsernameIndex'
+            KeySchema:
+              - AttributeName: 'username'
+                KeyType: 'HASH'
+            Projection:
+              ProjectionType: 'ALL'
+          - IndexName: 'OperationTypeIndex'
+            KeySchema:
+              - AttributeName: 'type'
+                KeyType: 'HASH'
+            Projection:
+              ProjectionType: 'ALL'
+        BillingMode: PAY_PER_REQUEST
+
+    DBMigrationLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+          LogGroupName: /aws/lambda/${self:service}-${sls:stage}-DBMigration
+          RetentionInDays: 3
+      # DeletionPolicy: Retain
+      # UpdateReplacePolicy: Retain
+
+    DBMigrationCustomResource:
+      Type: 'Custom::DBMigration'
+      DependsOn: [DBMigrationLambdaFunction]
+      Properties:
+        ServiceToken:
+          Fn::GetAtt: [ DBMigrationLambdaFunction, Arn ]
+        Version: 001
+
+  Outputs:
+    AuroraDBClusterArn:
+      Value: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}
+      Export:
+        Name: ${self:service}-${sls:stage}-AuroraDBClusterArn
+    AuroraDBClusterEndpoint:
+      Value:
+        Fn::GetAtt:
+          - AuroraDBCluster
+          - Endpoint.Address
+      Export:
+        Name: ${self:service}-${sls:stage}-AuroraDBClusterEndpoint
+    AuroraDBSecretArn:
+      Value:
+        Ref: AuroraDBSecret
+      Export:
+        Name: ${self:service}-${sls:stage}-AuroraDBSecretArn

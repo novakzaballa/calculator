@@ -1,0 +1,39 @@
+[
+  {
+    "id": "USER#novak",
+    "username": "novak",
+    "balance": 100,
+    "status": "active",
+    "password": "$2b$12$1XN0OuLrgkllgDWl7se3TeBTR4sPzjPAyj.pXdjP9zP5qkM1nPBay"
+  },
+  {
+    "id": "OPERATION#addition",
+    "type": "addition",
+    "cost": 1
+  },
+  {
+    "id": "OPERATION#subtraction",
+    "type": "subtraction",
+    "cost": 2
+  },
+  {
+    "id": "OPERATION#multiplication",
+    "type": "multiplication",
+    "cost": 3
+  },
+  {
+    "id": "OPERATION#division",
+    "type": "division",
+    "cost": 4
+  },
+  {
+    "id": "OPERATION#square_root",
+    "type": "square_root",
+    "cost": 5
+  },
+  {
+    "id": "OPERATION#random_string",
+    "type": "random_string",
+    "cost": 10
+  }
+]

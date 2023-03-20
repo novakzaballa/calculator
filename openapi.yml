@@ -1,0 +1,9 @@
+openapi: 3.0.0
+components:
+  schemas: {}
+  securitySchemes: {}
+info:
+  title: Calculator API
+  description: This is a sample API
+  version: '1'
+paths: {}
