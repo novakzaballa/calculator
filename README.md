@@ -3,7 +3,7 @@ Coded by Novak Zaballa
 
 The scope of this project is login and operations backend fro a payed calculator.
 
-This project has been built with Serverless Framework and targeting AWS lambda with Python 3.8 + DynamoDB + Aurora PostgreSQL. You can deploy the proyect to AWS installing and configuring serverless, or you can run the services locally, using the serverless-offline plugin, which is included. The offline configuration also includes a local DynamoDB instance is provided by the serverless-dynamodb-local plugin.
+This project has been built with Serverless Framework and targeting AWS lambda with Python 3.8 + DynamoDB + Aurora PostgreSQL. You can deploy the project to AWS installing and configuring serverless, or you can run the services locally, using the serverless-offline plugin, which is included. The offline configuration also includes a local DynamoDB instance is provided by the serverless-dynamodb-local plugin.
 
 Setup and test locally
 To test your service locally, without having to deploy it first, you will need node.js (tested with v13.7.0) and follow the steps below in the root directory of the project.
@@ -35,8 +35,10 @@ You can test locally following the former instructions, however there is also a 
 
 Available endpoints:
   GET - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
-  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/perform_operation
+  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
   POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/auth
+  PUT - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/{operation_record_id}
 
-Usage Examples
-You can test locally the endpoints available.
+### Live Testing with Swagger UI
+
+[Click here to see API documentation and test iit n Swagger UI](https://app.swaggerhub.com/apis-docs/novak.zaballa/calculator-api/1#/)
