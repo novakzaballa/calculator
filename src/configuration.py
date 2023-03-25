@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 # Disable validation for debugging
-DEBUG = False
+DEBUG = True
 
 # Environment variables
 SERVERLESS_SIMULATE = os.environ.get('SERVERLESS_SIMULATE')

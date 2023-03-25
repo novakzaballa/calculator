@@ -1,17 +1,20 @@
 """ API endpoint new_operation handler """
 
-import json
 from http import HTTPStatus
 from typing import Any, Dict
 
 from aws_lambda_powertools.utilities.parser import parse
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from src.api.v1.constants import INSUFFICIENT_BALANCE
 from src.api.v1.helpers.handler_validation_decorator import validate_handler
 from src.api.v1.helpers.response_builder import build_response
 from src.api.v1.operations.new_operation.input_params_types import (
     NewOperationRequestParams,
 )
-from src.model.operations.perform_operation import perform_operation
+from src.model.operations.perform_operation import (
+    InsufficientBalance,
+    perform_operation,
+)
 
 
 @validate_handler()
@@ -32,6 +35,15 @@ def new_operation(
         model=NewOperationRequestParams,
     )
 
-    result = perform_operation(user_id, params.operation, **params.arguments)
+    try:
+        result = perform_operation(user_id, params.operation, **params.arguments)
+    except InsufficientBalance:
+        build_response(
+            HTTPStatus.PAYMENT_REQUIRED,
+            False,
+            {"message": INSUFFICIENT_BALANCE}
+        )
 
-    return build_response(HTTPStatus.OK, json.dumps({"result": result}, default=str))
+    return build_response(
+        HTTPStatus.OK, True, {"result": result}
+    )

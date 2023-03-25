@@ -24,10 +24,6 @@ if DEBUG is True:
 # Set Relational Database URL
 database_url = f"postgresql+auroradataapi://:@/{AURORA_DB_NAME}"
 
-print(f"AURORA_DB_CLUSTER_ARN:{AURORA_DB_CLUSTER_ARN}")
-print(f"AURORA_DB_SECRET_ARN:{AURORA_DB_SECRET_ARN}")
-print(f"AURORA_DB_NAME:{AURORA_DB_NAME}")
-
 
 # Define SQLALchemy engine, Session, and Base
 engine = create_engine(
@@ -55,7 +51,7 @@ def create_db():
     """
     Creates database if it does not exist.
     """
-    print("INFO: Creating DB")
+    logging.info('Creating DB')
 
     rds_client = boto3.client("rds-data")
     db_exists = False
@@ -72,11 +68,11 @@ def create_db():
     for record in response["records"]:
         if record[0]["stringValue"] == AURORA_DB_NAME:
             db_exists = True
-            print("Database already exists.")
+            logging.error('Database already exists.')
 
     # Create Database
     if not db_exists:
-        print("Database not found, creating it.")
+        logging.error('Database not found, creating it.')
         sql = "CREATE DATABASE " + AURORA_DB_NAME
         response = rds_client.execute_statement(
             resourceArn=AURORA_DB_CLUSTER_ARN,
@@ -97,15 +93,16 @@ def get_table() -> Table:
     """
 
     if SERVERLESS_SIMULATE:
-        print(f"INFO: SERVERLESS_SIMULATE: {SERVERLESS_SIMULATE}")
+        logging.info('SERVERLESS_SIMULATE:  %s', SERVERLESS_SIMULATE)
+
         config['endpoint_url'] = "http://host.docker.internal:8000"
         config['aws_access_key_id'] = ''
         config['aws_secret_access_key'] = ''
 
-    print(f"INFO: {str(config)}")
+    logging.info(str(config))
 
     dynamodb = boto3.resource("dynamodb", **config)
 
-    print(f"INFO: dynamodb={str(dynamodb)}")
+    logging.info('dynamodb=%s', str(dynamodb))
 
     return dynamodb.Table(CALCULATOR_TABLE)

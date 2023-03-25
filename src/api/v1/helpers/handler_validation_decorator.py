@@ -1,5 +1,6 @@
 """ Validation and exception handling decorator code """
 
+import logging
 from functools import wraps
 from http import HTTPStatus
 from typing import Any, Callable, Dict
@@ -37,13 +38,13 @@ def validate_handler(authenticate: bool = True) -> Callable:
                 headers = CaseInsensitiveDict(event["headers"])
 
                 if "authorization" not in headers:
-                    return build_response(HTTPStatus.UNAUTHORIZED, MISSING_AUTH_HEADER)
+                    return build_response(HTTPStatus.UNAUTHORIZED, False, MISSING_AUTH_HEADER)
 
                 token = headers["authorization"].split()[1]
                 user_id = verify_token(token)
 
                 if user_id is None:
-                    return build_response(HTTPStatus.UNAUTHORIZED, WRONG_CREDENTIALS)
+                    return build_response(HTTPStatus.UNAUTHORIZED, False, WRONG_CREDENTIALS)
 
             if DEBUG:
                 return handler(event, _context, user_id)
@@ -52,18 +53,12 @@ def validate_handler(authenticate: bool = True) -> Callable:
                 return handler(event, _context, user_id)
             except (ValidationError, ValueError) as err:
                 # log error, return BAD_REQUEST
-                print(f"VALIDATION ERROR: {err}")
-                return {
-                    "statusCode": HTTPStatus.BAD_REQUEST,
-                    "body": str(err),
-                }
+                logging.error('VALIDATION ERROR: %s', err)
+                return build_response(HTTPStatus.BAD_REQUEST, False, str(err))
             except Exception as err:  # pylint: disable=broad-except
                 # log error, return INTERNAL_SERVER_ERROR
-                print(f"UNHANDLED ERROR: {err}")
-                return {
-                    "statusCode": HTTPStatus.INTERNAL_SERVER_ERROR,
-                    "body": INTERNAL_SERVER_ERROR,
-                }
+                logging.error('UNHANDLED ERROR: %s', err)
+                return build_response(HTTPStatus.INTERNAL_SERVER_ERROR, False, INTERNAL_SERVER_ERROR)
 
         return wrapper_func
     return decorator

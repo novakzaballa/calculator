@@ -1,9 +1,9 @@
 """ Data layer code for handling OperationRecord entity """
 
 from decimal import Decimal
+import logging
 from typing import List
 
-# from pydantic import validate_arguments
 from sqlalchemy import (
     BOOLEAN,
     NUMERIC,
@@ -21,7 +21,6 @@ from src.data.users import get_user_initial_balance
 from src.model.aggregates.user_operation_record import OperationRecord
 
 
-# @validate_arguments
 class OperationRecordData(Base):
     """Class that represents de model entity for the operation records"""
 
@@ -37,7 +36,6 @@ class OperationRecordData(Base):
     deleted = Column("deleted", BOOLEAN)
 
 
-# @validate_arguments
 def save_operation_record(operation_record: OperationRecord):
     """
     Saves the operation records to the service DynamoDB table.
@@ -82,6 +80,7 @@ def get_user_operation_record_page(
     sort_by: str = "date",
     sort_type: str = "desc",
     operation_id: str = None,
+    show_deleted: bool = None,
 ) -> List[OperationRecord]:
     """
     Returns the paginated operation records of a user.
@@ -104,11 +103,15 @@ def get_user_operation_record_page(
         OperationRecordData.user_balance,
         OperationRecordData.operation_response,
         OperationRecordData.date,
+        OperationRecordData.deleted,
         func.count(OperationRecordData.id).over().label("total"),
     ).filter(OperationRecordData.user_id == user_id)
 
     if operation_id:
         query = query.filter(OperationRecordData.operation_id == operation_id)
+
+    if show_deleted is False:
+        query = query.filter(OperationRecordData.deleted.is_(True))
 
     query = query.order_by(text(sort_by + " " + sort_type)).slice(start, end)
 
@@ -120,7 +123,7 @@ def get_user_operation_record_page(
         count = result[0].total
 
     return [
-        OperationRecord.from_orm(operation_record).dict(exclude={'user_id'})
+        OperationRecord.from_orm(operation_record).dict(exclude={"user_id"})
         for operation_record in result
     ], count
 
@@ -131,6 +134,7 @@ def soft_delete_operation_record(operation_record_id: int):
 
     :param int operation_record_id: Operation record ID to be soft deleted
     """
+
     db_session = get_db_session()
     statement = (
         update(OperationRecordData)
@@ -138,4 +142,5 @@ def soft_delete_operation_record(operation_record_id: int):
         .values(deleted=True)
     )
 
-    db_session.execute(statement).all()
+    db_session.execute(statement)
+    db_session.commit()

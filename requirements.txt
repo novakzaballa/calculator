@@ -8,6 +8,7 @@ python-dotenv==1.0.0
 boto3-stubs
 boto3-stubs[essential]
 requests==2.28.2
+pytest==7.2.2
 
 crhelper==2.0.5
 

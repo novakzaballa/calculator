@@ -1,9 +1,183 @@
-openapi: 3.0.0
+openapi: 3.1.0
 components:
-  schemas: {}
-  securitySchemes: {}
+  schemas:
+    Ok:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
 info:
   title: Calculator API
   description: This is a sample API
   version: '1'
-paths: {}
+paths:
+  /api/v1/operations:
+    get:
+      operationId: get_user_operations
+      summary: Get user operations records
+      description: Get historical operation records for an user
+      tags:
+        - Get-operations
+      responses:
+        '200':
+          description: Get operation Successfully completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+        '401':
+          description: Missing Authorization Header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/operations/:
+    post:
+      operationId: new_operation_handler
+      summary: User performed a new arithmetical operation
+      description: User performed a new arithmetical operation
+      tags:
+        - New-operation
+      responses:
+        '200':
+          description: Operation performed Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Wrong or expired credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/auth:
+    post:
+      operationId: auth
+      summary: User login
+      description: User login
+      tags:
+        - login-operation
+      responses:
+        '200':
+          description: Logged Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Wrong or expired credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/operations/{operation_id}:
+    delete:
+      operationId: delete_operation_handler
+      summary: User delete/invalidate an operation record
+      description: User performed a soft delete from an operation record
+      parameters:
+        - in: path
+          name: operation_id
+          required: true
+          schema:
+            type: string
+          description: The operation record's ID
+      tags:
+        - Delete-operation
+      responses:
+        '200':
+          description: Operation deleted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Wrong or expired credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

@@ -1,8 +1,10 @@
 """ Database migration code to create DB tables and seed data """
 
+import logging
 from crhelper import CfnResource
 from src.data.db_connection import create_db, engine
 from src.data.operation_records import Base
+from src.data.seed_data.seed_data_handler import initialize_seed_data
 
 
 helper = CfnResource(json_logging=False, log_level="WARNING", boto_level="CRITICAL")
@@ -22,7 +24,7 @@ def create_tables():
     """
     Creates DB tables
     """
-    print("****** Creating/Updating Tables ******")
+    logging.info("Creating/Updating Tables")
     Base.metadata.create_all(bind=engine)
 
 
@@ -34,11 +36,14 @@ def create(event, _context):
     :param Dict event: Handler event
     :param Dict context: Handler context
     """
-    print(event)
-    print("******** Starting DB Migration *********")
+    logging.info("Starting DB Migration")
+    logging.info("Creating AuroraDB database and tables")
     create_db()
     create_tables()
-    print("******** DB Migration Completed *********")
+    logging.info("Creating DynamoDB table")
+    initialize_seed_data()
+
+    logging.info("******** DB Migration Completed *********")
 
 
 @helper.update
@@ -49,8 +54,7 @@ def update(event, _context):
     :param _type_ event: _description_
     :param _type_ context: _description_
     """
-    print("******** DB Migration Update *********")
-    print(event)
+    logging.info("******** DB Migration Update *********")
 
 
 
@@ -62,5 +66,4 @@ def delete(event, _context):
     :param _type_ event: _description_
     :param _type_ context: _description_
     """
-    print("******** DB Migration Completed delete *********")
-    print(event)
+    logging.info("******** DB Migration Completed delete *********")

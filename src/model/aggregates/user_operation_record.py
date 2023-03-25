@@ -20,6 +20,7 @@ class OperationRecord(BaseModel):
     user_balance: Decimal
     operation_response: str
     date: datetime = datetime.now()
+    deleted: bool = False
 
     class Config:
         """Pydantic configuration to use enum values for validation"""

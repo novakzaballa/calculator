@@ -1,10 +1,15 @@
 """ The code related with the execution a requested operation """
 from decimal import Decimal
+import logging
+from src.api.v1.constants import INSUFFICIENT_BALANCE
 from src.data.operation_records import get_user_balance, save_operation_record
 from src.data.operations import get_operation_by_name
 from src.model.operations.operation import Operations, operate
 from src.model.aggregates.user_operation_record import OperationRecord
 
+
+class InsufficientBalance(Exception):
+    """Exception for errors related with random.org API"""
 
 def perform_operation(user_id: str, operation_name: Operations, **params) -> Decimal:
     """
@@ -24,9 +29,8 @@ def perform_operation(user_id: str, operation_name: Operations, **params) -> Dec
     user_balance = get_user_balance(user_id)
 
     if user_balance - operation.cost < 0.0:
-        print('Insufficient credit in balance to perform the requested operation.'
-              f' Balance:{user_balance} Cost:{operation.cost}')
-        raise ValueError('Insufficient credit in balance to perform the requested operation.')
+        logging.warning('%s Balance: %s Cost: %s', INSUFFICIENT_BALANCE, user_balance, operation.cost)
+        raise InsufficientBalance(INSUFFICIENT_BALANCE)
 
     # Store the operation record in the DB
     save_operation_record(OperationRecord(

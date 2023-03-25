@@ -38,15 +38,13 @@ def get_user_operations(
     if "operation_id" in params:
         parsed_params["operation_id"] = params["operation_id"]
 
+    if "show_deleted" in params:
+        parsed_params["show_deleted"] = eval(params["show_deleted"].capitalize())
+
     result, count = get_user_operation_record_page(**parsed_params)
 
     return build_response(
         HTTPStatus.OK,
-        json.dumps(
-            {
-                "result": result,
-                "count": count,
-            },
-            default=str,
-        ),
+        True,
+        {"result": result, "count": count},
     )

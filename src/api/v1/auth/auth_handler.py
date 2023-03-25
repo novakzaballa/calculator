@@ -1,6 +1,5 @@
 """ API endpoint auth handler """
 
-import json
 from http import HTTPStatus
 from typing import Any, Dict
 
@@ -33,8 +32,9 @@ def login(event: Dict[str, Any], _context: LambdaContext, _user_id: str=None) ->
     token = authenticate(username, password)
 
     if token:
-        return build_response(HTTPStatus.OK, json.dumps({"token": token}))
+        return build_response(HTTPStatus.OK, True, {"token": token})
+
     else:
         return build_response(
-            HTTPStatus.UNAUTHORIZED, json.dumps({"message": WRONG_CREDENTIALS})
+            HTTPStatus.UNAUTHORIZED, False, {"message": WRONG_CREDENTIALS}
         )
