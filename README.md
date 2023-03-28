@@ -5,7 +5,7 @@ The scope of this project is login and operations backend fro a payed calculator
 
 This project has been built with Serverless Framework and targeting AWS lambda with Python 3.8 + DynamoDB + Aurora PostgreSQL. You can deploy the project to AWS installing and configuring serverless, or you can run the services locally, using the serverless-offline plugin, which is included. The offline configuration also includes a local DynamoDB instance is provided by the serverless-dynamodb-local plugin.
 
-Setup and test locally
+### Setup and test locally
 To test your service locally, without having to deploy it first, you will need node.js (tested with v13.7.0) and follow the steps below in the root directory of the project.
 
 npm install
@@ -30,7 +30,7 @@ serverless deploy -v
 Authorization for testing
 Every request must include an authorization header containing the OAuth Bearer token. For testing purposes currently an account is in seed in the DB. The request content type must be application/json as per the examples below. While in dev stage, I will provide valid access credentials for a test user through a secure channel.
 
-Live Demo
+### Live Demo
 You can test locally following the former instructions, however there is also a live test with the following endpoints published in my AWS account for testing purposes:
 
 Available endpoints:

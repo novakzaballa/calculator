@@ -71,9 +71,12 @@ custom:
     dockerizePip: non-linux
     slim: true
     strip: false
-	
+    noDeploy:
+      - pytest
+      - pylint
+      - pylance
+
   documentation:
-    version: '1'
     title: 'Calculator API'
     description: 'This is a calculator API'
     models:
@@ -95,9 +98,48 @@ custom:
         #schema: ${file(components/schemas/ErrorResponse)}
 
 functions:
+  get_user_balance:
+    handler: src/api/v1/operations/get_user_balance/get_user_balance_handler.get_user_balance_handler
+    timeout: 30
+    events:
+      - http:
+          method: get
+          path: api/v1/users/current_user/balance
+          cors: true
+          documentation:
+            summary: Get user credit balance
+            description: Get user credit balance from user operation records
+            tags:
+              - Get-balance
+            methodResponses:
+              - statusCode: 200
+                responseBody:
+                  description: "Get balance successfully completed"
+                responseModels:
+                  application/json: "PutDocumentResponse"
+              - statusCode: 401
+                responseBody:
+                  description: Missing Authorization Header.
+                responseModels:
+                  application/json: 'ErrorResponse'
+              - statusCode: 500
+                responseBody:
+                  description: "Internal Server Error."
+                responseModels:
+                  application/json: "ErrorResponse"
+              - statusCode: 502
+                responseBody:
+                  description: "timeout error"
+                responseModels:
+                  application/json: "ErrorResponse"
+            
+    environment:
+      AURORA_DB_SECRET_ARN: !Ref AuroraDBSecret
+      AURORA_DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${AuroraDBCluster}
+
   get_user_operations:
     handler: src/api/v1/operations/get_user_operations/get_user_operations_handler.get_user_operations
-    timeout: 100
+    timeout: 30
     events:
       - http:
           method: get
@@ -132,7 +174,7 @@ functions:
             methodResponses:
               - statusCode: 200
                 responseBody:
-                  description: "Get operation Successfully completed"
+                  description: "Get operation successfully completed"
                 responseModels:
                   application/json: "PutDocumentResponse"
               - statusCode: 401
@@ -168,6 +210,7 @@ functions:
 
   new_operation_handler:
     handler: src/api/v1/operations/new_operation/new_operation_handler.new_operation
+    timeout: 30
     events:
       - http:
           method: post
@@ -213,6 +256,7 @@ functions:
 
   delete_operation_handler:
     handler: src/api/v1/operations/delete_operation/delete_operation_handler.delete_operation
+    timeout: 30
     events:
       - http:
           method: delete

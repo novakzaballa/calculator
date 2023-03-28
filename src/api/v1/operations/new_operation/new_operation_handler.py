@@ -36,7 +36,7 @@ def new_operation(
     )
 
     try:
-        result = perform_operation(user_id, params.operation, **params.arguments)
+        response = perform_operation(user_id, params.operation, **params.arguments)
     except InsufficientBalance:
         build_response(
             HTTPStatus.PAYMENT_REQUIRED,
@@ -45,5 +45,5 @@ def new_operation(
         )
 
     return build_response(
-        HTTPStatus.OK, True, {"result": result}
+        HTTPStatus.OK, True, response
     )

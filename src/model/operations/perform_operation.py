@@ -1,5 +1,7 @@
 """ The code related with the execution a requested operation """
 from decimal import Decimal
+from datetime import datetime
+
 import logging
 from src.api.v1.constants import INSUFFICIENT_BALANCE
 from src.data.operation_records import get_user_balance, save_operation_record
@@ -28,7 +30,11 @@ def perform_operation(user_id: str, operation_name: Operations, **params) -> Dec
     # Get current user credit balance
     user_balance = get_user_balance(user_id)
 
-    if user_balance - operation.cost < 0.0:
+    new_user_balance = user_balance - operation.cost
+
+    print(f'user_balance: {user_balance} operation.cost: {operation.cost} new_balance: {new_user_balance}')
+
+    if new_user_balance < 0.0:
         logging.warning('%s Balance: %s Cost: %s', INSUFFICIENT_BALANCE, user_balance, operation.cost)
         raise InsufficientBalance(INSUFFICIENT_BALANCE)
 
@@ -37,8 +43,9 @@ def perform_operation(user_id: str, operation_name: Operations, **params) -> Dec
         operation_id=operation.id,
         user_id=user_id,
         amount=operation.cost,
-        user_balance=user_balance - operation.cost,
-        operation_response=str(result)
+        user_balance=new_user_balance,
+        operation_response=str(result),
+        date=datetime.now()
     ))
 
-    return result
+    return {'result':result, 'user_balance': new_user_balance}

@@ -1,8 +1,7 @@
 """ Data layer code for handling OperationRecord entity """
 
 from decimal import Decimal
-import logging
-from typing import List
+from typing import List, Union
 
 from sqlalchemy import (
     BOOLEAN,
@@ -79,8 +78,8 @@ def get_user_operation_record_page(
     rows_per_page: int,
     sort_by: str = "date",
     sort_type: str = "desc",
-    operation_id: str = None,
-    show_deleted: bool = None,
+    operation_id: Union[str, None]= None,
+    show_deleted: Union[bool, None] = None,
 ) -> List[OperationRecord]:
     """
     Returns the paginated operation records of a user.

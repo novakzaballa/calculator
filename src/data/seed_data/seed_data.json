@@ -1,8 +1,22 @@
 [
   {
-    "id": "USER#novak2",
+    "id": "USER#novak",
     "username": "novak",
     "balance": 100,
+    "status": "active",
+    "password": "$2b$12$1XN0OuLrgkllgDWl7se3TeBTR4sPzjPAyj.pXdjP9zP5qkM1nPBay"
+  },
+  {
+    "id": "USER#jane",
+    "username": "jane",
+    "balance": 500,
+    "status": "active",
+    "password": "$2b$12$1XN0OuLrgkllgDWl7se3TeBTR4sPzjPAyj.pXdjP9zP5qkM1nPBay"
+  },
+  {
+    "id": "USER#john",
+    "username": "john",
+    "balance": 30,
     "status": "active",
     "password": "$2b$12$1XN0OuLrgkllgDWl7se3TeBTR4sPzjPAyj.pXdjP9zP5qkM1nPBay"
   },

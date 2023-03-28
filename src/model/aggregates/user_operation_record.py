@@ -19,7 +19,7 @@ class OperationRecord(BaseModel):
     amount: Decimal
     user_balance: Decimal
     operation_response: str
-    date: datetime = datetime.now()
+    date: datetime
     deleted: bool = False
 
     class Config:
