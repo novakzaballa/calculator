@@ -34,6 +34,7 @@ def new_operation(
         event=event["body"],
         model=NewOperationRequestParams,
     )
+    # print('DEBUG: user_id:', user_id, 'params.operation:', params.operation, '**params.arguments', **params.arguments)
 
     try:
         response = perform_operation(user_id, params.operation, **params.arguments)

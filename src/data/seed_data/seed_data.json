@@ -21,7 +21,7 @@
     "password": "$2b$12$1XN0OuLrgkllgDWl7se3TeBTR4sPzjPAyj.pXdjP9zP5qkM1nPBay"
   },
   {
-    "id": "OPERATION#addition2",
+    "id": "OPERATION#addition",
     "type": "addition",
     "cost": 1
   },

@@ -33,7 +33,7 @@ class Operation(BaseModel):
         use_enum_values = True
 
 
-@validate_arguments
+## @validate_arguments
 def add(operand1: Decimal, operand2: Decimal) -> Decimal:
     """
     Adds operand1 to operand2 and returns the result

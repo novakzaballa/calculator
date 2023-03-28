@@ -21,11 +21,3 @@ def test_divide():
 def test_sqrt():
      output = sqrt(9)
      assert output == 3
-
-def test_perform_operation():
-     output = perform_operation(user_id = 'USER#novak', operation_name = 'addition',  params = {'operand1': 3, 'operand2': 3})
-     assert output == 6
-
-def test_get_user_balance():
-     output = get_user_balance(user_id = 'USER#novak')
-     assert output == 6

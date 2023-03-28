@@ -21,5 +21,18 @@ src/data/seed_data.json
 venv
 .dynamodb
 
+# Cache
+src/__pycache__/
+src/data/__pycache__/
+src/api/v1/auth/__pycache__/
+src/api/v1/helpers/__pycache__/
+src/api/v1/__pycache__/
+src/model/__pycache__/
+src/external/__pycache__/
+src/model/operations/__pycache__/
+src/model/aggregates/__pycache__/
+/tests/__pycache__/
+.pytest_cache/
+
 # Serverless directories
 .serverless
