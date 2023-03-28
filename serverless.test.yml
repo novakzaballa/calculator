@@ -1,0 +1,48 @@
+- name: login
+  endpoint: {function: auth}
+  request:
+    body:
+      username: novak
+      password: password123
+  response:
+    status: 200
+- name: get_user_balance
+  endpoint: {function: get_user_balance}
+  request:
+    headers: 
+      Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNFUiNub3ZhayIsImV4cCI6MTY4MDA0NDEzMX0.u4Fw7AiKogGjDr7lisRAi_JiDor5dsB4W6DK8PKqfMs
+  response:
+    status: 200
+- name: new_operation_handler
+  endpoint: {function: new_operation_handler}
+  request:
+    headers: 
+      Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNFUiNub3ZhayIsImV4cCI6MTY4MDA0NDEzMX0.u4Fw7AiKogGjDr7lisRAi_JiDor5dsB4W6DK8PKqfMs
+    body:
+      operation: 'division'
+      arguments:
+        operand1: 40
+        operand2: 4
+  response:
+    status: 200
+- name: get_user_operations
+  endpoint: {function: get_user_operations}
+  request:
+    headers: 
+      Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNFUiNub3ZhayIsImV4cCI6MTY4MDA0NDEzMX0.u4Fw7AiKogGjDr7lisRAi_JiDor5dsB4W6DK8PKqfMs
+    form:
+      page_number: 1
+      rows_per_page: 4
+  response:
+    status: 200
+- name: delete_operation_handler
+  endpoint:
+    method: DELETE
+    path: api/v1/operations/498
+  request:
+    headers: 
+      Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNFUiNub3ZhayIsImV4cCI6MTY4MDA0NDEzMX0.u4Fw7AiKogGjDr7lisRAi_JiDor5dsB4W6DK8PKqfMs
+    param:
+      operation_id: 498
+  response:
+    status: 200
