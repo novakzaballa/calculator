@@ -12,10 +12,12 @@ Every request must include an authorization header containing the OAuth Bearer t
 You can test locally following the former instructions, however there is also a live test with the following endpoints published in my AWS account for testing purposes:
 
 Available endpoints:
-  GET - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
-  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
-  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/auth
-  PUT - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/{operation_record_id}
+```
+GET - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
+POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
+POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/auth
+PUT - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/{operation_record_id}
+```
 
 ### Live Testing with Swagger UI
 
@@ -58,16 +60,16 @@ Every request must include an authorization header containing the OAuth Bearer t
 You can test locally following the former instructions, however there is also a live test with the following endpoints published in my AWS account for testing purposes:
 
 Available endpoints:
-```
-  GET - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
-  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
-  POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/auth
-  PUT - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/{operation_record_id}
-```
+- GET - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
+- POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations
+- POST - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/auth
+- PUT - https://68i17san2e.execute-api.us-east-1.amazonaws.com/dev/api/v1/operations/{operation_record_id}
+
 ### Live Testing with Swagger UI
 
 [Click here to see API documentation and test it in Swagger UI](https://app.swaggerhub.com/apis-docs/novak.zaballa/calculator-api/1)
 
 ### Test usernames
-You can use the following usernames: ```novak```, ```jane```,and ```john```. They have an initial credit balance of 100, 500, and 30, correspondingly.
+You can use the following usernames: ```novak```, ```jane```,and ```john```. They have an initial credit balance of 100, 500, and 30, correspondingly. The username ```john``` is used by Cypress automated tests, so its operations records are cleaned before and after running the cypress tests automatically as part of the tests.
+
 The password for the test users has been sent in an email.
