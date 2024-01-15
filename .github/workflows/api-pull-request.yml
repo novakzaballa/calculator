@@ -1,8 +1,8 @@
 name: API Pull Request
 
 on:
-  workflow_run:
-    workflows: ['Github Labeler']
+  # workflow_run:
+  #   workflows: ['Github Labeler']
   push:
     branches:
       - master
@@ -33,11 +33,11 @@ jobs:
     #     python-version: ['3.10', '3.11']
 
     steps:
-      - name: Cloning repo
-        uses: actions/checkout@v3
+      # - name: Cloning repo
+      #   uses: actions/checkout@v3
 
       - name: Install requirements
-        run: pip install -r requirements
+        run: pip install -r requirements.txt
 
       # - uses: actions/setup-python@v4
       #   with:
@@ -74,8 +74,6 @@ jobs:
       #     restore-keys: testmon-data-python${{ matrix.python-version }}-
 
       - name: Run Tests
-        # env:
-        #   DOTENV_OVERRIDE_FILE: .env-ci-testmon
         run: pytest
 
       # - name: Save testmon data cache
