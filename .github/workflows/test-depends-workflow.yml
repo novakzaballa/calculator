@@ -1,18 +1,18 @@
 name: Test depends workflow
 
-# on:
-#   # pull_request:
-#   #   types: [opened, synchronize, reopened, ready_for_review]
-#   workflow_run:
-#     workflows: ["Github Labeler"]
-#     types: 
-#       - completed
-
 on:
+  # pull_request:
+  #   types: [opened, synchronize, reopened, ready_for_review]
   workflow_run:
-    workflows: [Github Labeler]
+    workflows: ["Github Labeler"]
     types:
       - completed
+
+# on:
+#   workflow_run:
+#     workflows: [Github Labeler]
+#     types:
+#       - completed
 
 jobs:
   on-success:
