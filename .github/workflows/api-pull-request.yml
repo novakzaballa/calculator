@@ -3,7 +3,6 @@ name: API Pull Request
 on:
   workflow_run:
     workflows: ['Github Labeler']
-    branches: [master]
     types: 
       - completed
 
