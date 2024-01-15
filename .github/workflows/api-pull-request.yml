@@ -3,6 +3,9 @@ name: API Pull Request
 on:
   workflow_run:
     workflows: ['Github Labeler']
+    branches: [master]
+    types: 
+      - completed
 
 # defaults:
 #   run:
@@ -30,8 +33,8 @@ jobs:
     #     python-version: ['3.10', '3.11']
 
     steps:
-      # - name: Cloning repo
-      #   uses: actions/checkout@v3
+      - name: Cloning repo
+        uses: actions/checkout@v3
 
       - name: Install requirements
         run: pip install -r requirements.txt
