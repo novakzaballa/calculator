@@ -3,13 +3,10 @@ name: API Pull Request
 on:
   workflow_run:
     workflows: ['Github Labeler']
-  push:
-    branches:
-      - master
 
-defaults:
-  run:
-    working-directory: test
+# defaults:
+#   run:
+#     working-directory: test
 
 jobs:
   test:
