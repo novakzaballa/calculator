@@ -10,7 +10,7 @@ name: Test depends workflow
 
 on:
   workflow_run:
-    workflows: [Run Tests]
+    workflows: [Github Labeler]
     types:
       - completed
 
