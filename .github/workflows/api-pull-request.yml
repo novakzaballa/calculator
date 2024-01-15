@@ -1,8 +1,8 @@
 name: API Pull Request
 
 on:
-  # workflow_run:
-  #   workflows: ['Github Labeler']
+  workflow_run:
+    workflows: ['Github Labeler']
   push:
     branches:
       - master
