@@ -1,6 +1,8 @@
 name: Test depends workflow
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_run:
     workflows: ['Github Labeler']
     types: 
