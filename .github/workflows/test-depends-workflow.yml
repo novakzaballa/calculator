@@ -2,8 +2,9 @@ name: Test depends workflow
 
 on:
   workflow_run:
-    workflows: [Github Labeler]
-    types: [completed]
+    workflows: ['Github Labeler']
+    types: 
+      - completed
 
 jobs:
   on-success:
