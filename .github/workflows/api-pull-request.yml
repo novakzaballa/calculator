@@ -2,24 +2,32 @@ name: API Pull Request Github Labeler
 on:
   workflow_run:
     workflows:
-      - Test depends Github Labeler
+      - Github Labeler
     types:
       - completed
 
 
 jobs:
   test-job:
+    if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
     name: API Unit Tests
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install requirements
-        run: pip install -r requirements.txt
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+      # - name: Install requirements
+      #   run: pip install -r requirements.txt
       - name: Run Tests
         run: pytest
 
 # defaults:
 #   run:
-#     working-directory: test
+#     working-directory: testd
 
 # jobs:
 #   test-job:
@@ -29,7 +37,6 @@ jobs:
 #       - name: 'Trigger'
 #         run: echo 'The triggering workflow passed'
 
-  # if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
 
     # services:
     #   postgres:
@@ -41,10 +48,7 @@ jobs:
     #     ports: ['5432:5432']
     #     options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    # strategy:
-    #   max-parallel: 2
-    #   matrix:
-    #     python-version: ['3.10', '3.11']
+
 
       # - uses: actions/setup-python@v4
       #   with:
