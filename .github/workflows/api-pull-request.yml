@@ -27,7 +27,7 @@ jobs:
 
 # defaults:
 #   run:
-#     working-directory: testd
+#     working-directory: test
 
 # jobs:
 #   test-job:
