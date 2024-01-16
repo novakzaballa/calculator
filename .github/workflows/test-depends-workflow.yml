@@ -1,5 +1,4 @@
-name: Test
-
+name: Test depends Github Labeler
 on:
   workflow_run:
     workflows:
@@ -7,9 +6,17 @@ on:
     types:
       - completed
 
+# on:
+#   workflow_call:
+#     workflows:
+#       - Github Labeler
+#     types:
+#       - completed
+
 jobs:
   test-job:
     name: Test Step
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'The triggering workflow passed'
+      - name: 'Trigger'
+        run: echo 'The triggering workflow passed'
