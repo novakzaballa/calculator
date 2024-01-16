@@ -1,20 +1,35 @@
-name: API Pull Request
-
+name: API Pull Request Github Labeler
 on:
   workflow_run:
-    workflows: ['Github Labeler']
-    types: 
+    workflows:
+      - Test depends Github Labeler
+    types:
       - completed
+
+
+jobs:
+  test-job:
+    name: API Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run Tests
+        run: pytest
 
 # defaults:
 #   run:
 #     working-directory: test
 
-jobs:
-  test:
-    if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
-    runs-on: General-Purpose-8c-Runner
-    name: API Unit Tests
+# jobs:
+#   test-job:
+#     name: Test Step
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 'Trigger'
+#         run: echo 'The triggering workflow passed'
+
+  # if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
 
     # services:
     #   postgres:
@@ -30,13 +45,6 @@ jobs:
     #   max-parallel: 2
     #   matrix:
     #     python-version: ['3.10', '3.11']
-
-    steps:
-      - name: Cloning repo
-        uses: actions/checkout@v3
-
-      - name: Install requirements
-        run: pip install -r requirements.txt
 
       # - uses: actions/setup-python@v4
       #   with:
@@ -72,8 +80,6 @@ jobs:
       #     key: testmon-data-python${{ matrix.python-version }}-${{ github.event.pull_request.base.sha }}
       #     restore-keys: testmon-data-python${{ matrix.python-version }}-
 
-      - name: Run Tests
-        run: pytest
 
       # - name: Save testmon data cache
       #   id: cache-testmon-save

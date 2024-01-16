@@ -1,21 +1,22 @@
-name: Test depends workflow
-
-# on:
-#   # pull_request:
-#   #   types: [opened, synchronize, reopened, ready_for_review]
-#   workflow_run:
-#     workflows: ["Github Labeler"]
-#     types: 
-#       - completed
-
+name: Test depends Github Labeler
 on:
   workflow_run:
-    workflows: [Github Labeler]
+    workflows:
+      - Github Labeler
     types:
       - completed
 
+# on:
+#   workflow_call:
+#     workflows:
+#       - Github Labeler
+#     types:
+#       - completed
+
 jobs:
-  on-success:
+  test-job:
+    name: Test Step
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'The triggering workflow passed'
+      - name: 'Trigger'
+        run: echo 'The triggering workflow passed'
