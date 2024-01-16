@@ -1,9 +1,9 @@
 name: API Pull Request
 on:
   workflow_run:
-    workflows: 
+    workflows:
       - Github Labeler
-    types: 
+    types:
       - completed
 
 # defaults:
@@ -11,10 +11,24 @@ on:
 #     working-directory: test
 
 jobs:
-  test:
-    # if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
-    runs-on: ubuntu-latest
+  test-job:
     name: API Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run Tests
+        run: pytest
+        
+# jobs:
+#   test-job:
+#     name: Test Step
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 'Trigger'
+#         run: echo 'The triggering workflow passed'
+
+  # if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
 
     # services:
     #   postgres:
@@ -30,16 +44,6 @@ jobs:
     #   max-parallel: 2
     #   matrix:
     #     python-version: ['3.10', '3.11']
-
-    steps:
-      - name: Cloning repo
-        uses: actions/checkout@v3
-
-      - name: Install requirements
-        run: pip install -r requirements.txt
-
-      - name: Run Tests
-        run: pytest
 
       # - uses: actions/setup-python@v4
       #   with:
