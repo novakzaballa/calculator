@@ -2,7 +2,8 @@ name: API Pull Request
 
 on:
   workflow_run:
-    workflows: ['Github Labeler']
+    workflows: 
+      - Github Labeler
     types: 
       - completed
 
@@ -13,7 +14,7 @@ on:
 jobs:
   test:
     if: ${{ github.event_name == 'push' || contains( github.event.pull_request.labels.*.name, 'github') || contains( github.event.pull_request.labels.*.name, 'api') }}
-    runs-on: General-Purpose-8c-Runner
+    runs-on: ubuntu-latest
     name: API Unit Tests
 
     # services:
@@ -37,6 +38,9 @@ jobs:
 
       - name: Install requirements
         run: pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest
 
       # - uses: actions/setup-python@v4
       #   with:
@@ -72,8 +76,6 @@ jobs:
       #     key: testmon-data-python${{ matrix.python-version }}-${{ github.event.pull_request.base.sha }}
       #     restore-keys: testmon-data-python${{ matrix.python-version }}-
 
-      - name: Run Tests
-        run: pytest
 
       # - name: Save testmon data cache
       #   id: cache-testmon-save
