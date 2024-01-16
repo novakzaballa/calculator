@@ -1,14 +1,11 @@
-name: API Pull Request
+name: API Pull Request Github Labeler
 on:
   workflow_run:
     workflows:
-      - Github Labeler
+      - Test depends Github Labeler
     types:
       - completed
 
-# defaults:
-#   run:
-#     working-directory: test
 
 jobs:
   test-job:
@@ -19,7 +16,11 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run Tests
         run: pytest
-        
+
+# defaults:
+#   run:
+#     working-directory: test
+
 # jobs:
 #   test-job:
 #     name: Test Step
